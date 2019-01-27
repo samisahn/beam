@@ -1,63 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> Beam </title>
+    <title>Solar FoofTops</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
-
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
 </head>
-
 <body id="body">
-    <div id="main_content">
-        <h1 id="title">Beam</h1>
 
-        <script>
-            var places;
+<div id="main_content">
+    <h1 id="title">Beam</h1>
 
-            function fillInAddress() {
-                var place = places.getPlace();
-                console.log(place);
-            }
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDMHzxk7knlRj_BCAAb9MvU4MuKXCAXyuU&sensor=false&libraries=places"></script>
+    <script type="text/javascript">
+       google.maps.event.addDomListener(window, 'load', function () {
+           var places = new google.maps.places.Autocomplete(document.getElementById('address_input'));
+       });
+    </script>
 
-            function initAutocomplete() {
-                var input = document.getElementById('address_input');
-                var places = new google.maps.places.Autocomplete(input);
-            
-                places.addListener('place_changed', fillInAddress);
-            }
-        </script>
+    <form action="javascript:runAddress()" method="POST" class="input-group">
+        <input id="address_input" type="text" class="form-control" name="address_input" placeholder="Enter an address to see your possible savings...">
+        <span class="input-group-btn">
+            <button id="calculateBtn" class="btn btn-default" type="submit">Calculate</button>
+        </span>
+    </form>
 
-        <form action="javascript:run()" method="POST" class="input-group">
-            <input id="address_input" type="text" class="form-control" name="address_input" placeholder = "Enter an address!">
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="submit">Calculate</button>
-            </span>
-        </form>
-    </div>
+</div>
 
-    <div id="loading_results">
-        <h2>Calculating your results<span id="dots"></span></h2>
-    </div>
+<div id="loading_results">
+    <h2>Calculating your results<span id="dots"></span></h2>
+</div>
 
-    <div id="results">
-        <a id="close" href="javascript:closeResults()"><h1>x</h1></a>
-        <div id="results_inner">
-            <h2 id='other_text' style = "text-align: center">Address</h2>
-            <div id="general_info" style = "text-align: center">
-                <h5> Estimate roof area: <span id="area">0</span> <span> m<sup>2</sup></span> </h5>
-                <h5> Estimate light intensity: <span id="light">0</span> <span> W/m<sup>2</sup></span></h5>
-                <h5> Estimate savings: <span> $</span><span id="savings">0</span>/month </h5>
-            </div>
-
-            <div id = "both_images" style = "text-align: center">
-                <img src="" id='the_image' style="margin-left: 0px;">
-                <img src="" id='segmented_image'>
-            </div>
+<div id="results">
+    <a id="close" href="javascript:closeResults()"><h1>x</h1></a>
+    <div id="results_inner">
+        <h2 id='other_text' align="center">Address</h2>
+        <div id="general_info" align="center">
+            <h5 align="center">Approximate estimated roof area: <span id="area">0</span><span> m^2</span></h5>
+            <h5 align="center">Estimated average light intensity: <span id="light">0</span><span> W/m^2</span></h5>
+            <h5 align="center">Possible savings: <span id="savings">0</span><span> $</span></h5>
         </div>
+        <img src="" id='the_image' style="margin-left: 0px;" align="center">
+        <img src="" id='segmented_image' align="center">
     </div>
+</div>
+
 </body>
 
 <script type="text/javascript">
@@ -67,43 +56,45 @@
         document.getElementById("address_input").style.visibility = "visible"
         document.getElementById("address_input").value = ""
     }
-
-    function getInfo(address) {
-        var responseDict = $.ajax({
+    function unpack(str) {
+        var bytes = [];
+        for(var i = 0, n = str.length; i < n; i++) {
+            var char = str.charCodeAt(i);
+            bytes.push(char >>> 8, char & 0xFF);
+        }
+        return bytes;
+    }
+    function runPyScript(address) {
+        var jqXHR = $.ajax({
             type: "POST",
-            url: "run",
+            url: "run_address",
             async: false,
             data: {'address': address}
         });
-
-        return responseDict.responseText;
+        return jqXHR.responseText;
     }
-
-    function run() {
+    function runAddress() {
         document.getElementById("loading_results").style.opacity = "1"
         document.getElementById("loading_results").style.visibility = "visible"
-
         document.getElementById("address_input").style.visibility = "hidden"
-
         document.body.style.cursor = "wait"
-
         var dots = window.setInterval( function() {
             var wait = document.getElementById("dots");
-            if (wait.innerHTML.length > 2) 
+            if ( wait.innerHTML.length > 3 )
                 wait.innerHTML = "";
-            else 
+            else
                 wait.innerHTML += ".";
             }, 500);
-            
         setTimeout(function(){
-            result = getInfo(document.getElementById("address_input").value);
-            var responseDict = JSON.parse(result);
-            document.getElementById("other_text").innerHTML = responseDict.address;
-            document.getElementById("area").innerHTML = responseDict.area;
-            document.getElementById("light").innerHTML = responseDict.mean_light_intensity;
-            document.getElementById("savings").innerHTML = responseDict.monthly_savings;
-            document.getElementById("the_image").src = "data:image/png;base64," + responseDict.satellite;
-            document.getElementById("segmented_image").src = "data:image/png;base64," + responseDict.roof;
+            //do what you need here
+            result = runPyScript(document.getElementById("address_input").value);
+            var returned_values = JSON.parse(result);
+            document.getElementById("other_text").innerHTML = returned_values.address;
+            document.getElementById("area").innerHTML = returned_values.area;
+            document.getElementById("light").innerHTML = returned_values.mean_light_intensity;
+            document.getElementById("savings").innerHTML = returned_values.montly_savings;
+            document.getElementById("the_image").src = "data:image/png;base64," + returned_values.sat_img;
+            document.getElementById("segmented_image").src = "data:image/png;base64," + returned_values.seg_img;
             document.getElementById("loading_results").style.opacity = "0"
             document.getElementById("loading_results").style.visibility = "hidden"
             document.getElementById("results").style.opacity = "1"
@@ -112,8 +103,4 @@
         }, 2000);
     }
 </script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMHzxk7knlRj_BCAAb9MvU4MuKXCAXyuU&libraries=places&callback=initAutocomplete"
-        async defer></script>
-
 </html>

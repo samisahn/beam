@@ -6,9 +6,6 @@ html {
 
 body {
 	transition: all .5s;
-	background: url('../img/background.jpg');
-	background-repeat: no-repeat;
-	background-size: cover;
 }
 
 #main_content {
@@ -21,7 +18,7 @@ body {
 
 #title {
 	font-size: 80px;
-	color: white;
+	color: black;
 	font-family: 'Roboto', sans-serif;
 	padding: 80px;
 	padding-bottom: 95px;
@@ -60,8 +57,7 @@ img {
 }
 
 #address_input {
-	padding: 20px;
-	padding-left: 10px;
+	margin-top: -100px;
 	font-size: 20px;
 }
 
@@ -116,7 +112,7 @@ img {
 }
 
 #general_info {
-	padding-left: 10px; 
+	padding-left: 10px;
 	text-align: left;
 	padding-top: 10px;
 }
@@ -134,4 +130,21 @@ img {
 
 #savings {
 	text-decoration: bold;
+}
+
+#share_info {
+	color: light-gray;
+}
+
+#calculateBtn {
+	margin-top: -160px
+}
+
+#loading_results h1{
+	padding: 500px;
+}
+
+::placeholder{
+	font-style: bold;
+	font-family: sans-serif;
 }
