@@ -9,6 +9,49 @@
     <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
 </head>
 <body id="body">
+<<<<<<< HEAD
+=======
+    <div id="main_content">
+        <h1 id="title" style = "color: black">Beam</h1>
+
+        <script>
+            var places;
+
+            function fillInAddress() {
+                var place = places.getPlace();
+                console.log(place);
+            }
+
+            function initAutocomplete() {
+                var input = document.getElementById('address_input');
+                var places = new google.maps.places.Autocomplete(input);
+            
+                places.addListener('place_changed', fillInAddress);
+            }
+        </script>
+
+        <form action="javascript:run()" method="POST" class="input-group">
+            <input id="address_input" type="text" class="form-control" name="address_input" placeholder = "Enter an address!">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Calculate</button>
+            </span>
+        </form>
+    </div>
+
+    <div id="loading_results">
+        <h2>Calculating your results<span id="dots"></span></h2>
+    </div>
+
+    <div id="results">
+        <a id="close" href="javascript:closeResults()"><h1>x</h1></a>
+        <div id="results_inner">
+            <h2 id='other_text' style = "text-align: center">Address</h2>
+            <div id="general_info" style = "text-align: center">
+                <h5> Estimate roof area: <span id="area">0</span> <span> m<sup>2</sup></span> </h5>
+                <h5> Estimate light intensity: <span id="light">0</span> <span> W/m<sup>2</sup></span></h5>
+                <h5> Estimate savings: <span> $</span><span id="savings">0</span>/month </h5>
+            </div>
+>>>>>>> 653baf37cad0bb72acb6abf39a0bbab3d8478d11
 
 <div id="main_content">
     <h1 id="title">Beam</h1>
